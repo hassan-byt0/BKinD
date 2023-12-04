@@ -132,59 +132,6 @@ python extract_features.py --train_dir [images from train split] --test_dir [ima
  --resume [checkpoint path] --output_dir [output directory to store keypoints] --imsize [training image size] --nkpts [number of discovered keypoints]
 ```
 
-##Results
-
-This section will elaborate on the results we obtained from the experiments. we can see that the key
-points after applying removeshadowcolor() function[3] keypoints lie exactly where they should have
-been. This is because we extracted or segmented our object and trained on that we are able to only
-track the object while the rest were blacked out.
-Another interesting observation is the green color keypoints which lie approximately at the middle
-of the images of output of Custom dataset trained on the model with Bit-wise And operation ap-
-plied(fig 14), we can reason it as the component of total loss i.e. rotation loss tries to fit keypoints
-in the center and hence giving us green point at center signifying the axis of rotation of pen in the
-video.
-
-
-## Experiments
-The primary focus of the experiments was to address challenges related to shadow interference in
-video analysis as a pre-processing step. Three distinct approaches were employed, each tailored to
-enhance the accuracy of keypoint identification:
-5.1 Convolutional and Filtering
-This approach incorporated convolutional operations and filtering techniques to mitigate the impact
-of shadows on keypoint identification. By applying spatial and temporal filters, the model aimed
-to enhance the robustness of keypoint detection and minimize the influence of shadow artifacts by
-equalizing the area of shadows in image but after the process we get a blurry image where even we
-cant detect the edges.
-5.2 Thresholding with SSIM
-Utilizing the Structural Similarity Index (SSIM), this approach introduced thresholds to filter out
-frames with significant shadow distortion. By comparing the SSIM values between consecutive frames,
-the model identified and excluded frames with undesirable shadow artifacts, contributing to im-
-proved keypoint accuracy. Here after the process, the portion of the object is removed instead of
-shadows and we lost the ability to distinguish between them so we are not going to use this as the
-prep-processing stage.
-8
-Figure 13: Original image vs bitwise AND operated image
-5.3 Bitwise AND Operation
-Motivated by insights from the reference book ”Digital Image Processing” [4], this approach em-
-ployed bitwise AND operations to eliminate shadow-related anomalies in video frames. By selectively
-preserving pixel information common to consecutive frames, the model successfully removed shadow
-interference, resulting in enhanced keypoint identification accuracy by segmenting only the part of
-object.
-To utilise approach 5.3 we need to consider a condition on our dataset that is: It has uniform color
-on the object and relatively higher brightness compare to its background. Custom Dataset 3 adheres
-to this assumption, capturing the motion and rotation of a pen under conditions of uniform color of
-pen and higher brightness(Blue pen vs white background)
-So we implemented the removeshadowscolor() function[3] defined in another colab notebook which
-input the folder from the drive as inputfolder where are images extracted from the video. These im-
-ages are converted to HSV space since we got a better idea of intensity information and color in-
-formation separately, Then by masking and applying the bit and operation we get the outputs and
-store them at the outputfolder which will be used for the model. The code for the same is added to
-the github repository as a new folder named removeshadowcolor function[3][4.
-These experiments collectively aimed to refine the self-supervised keypoint discovery model, address-
-ing challenges posed by shadow interference and improving its performance across diverse datasets.
-The success of the third approach underscored its efficacy in eliminating shadows and enhancing the
-overall accuracy of keypoint identification.
-
 
 ## License
 
